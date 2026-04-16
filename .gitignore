@@ -9,3 +9,7 @@ blob-report/
 *.log
 .env
 .env.local
+
+# Material de estudo pessoal — não publicar
+ESTUDO.html
+docs/

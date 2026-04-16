@@ -58,7 +58,6 @@ npm run report
 ```
 playwright-e2e-ts/
 ├── .github/workflows/     # CI com GitHub Actions
-├── docs/                  # Referência Python → TypeScript
 ├── pages/                 # Page Objects (classes tipadas)
 │   ├── LoginPage.ts
 │   ├── DropdownPage.ts
@@ -88,8 +87,3 @@ playwright-e2e-ts/
 - **Cobertura de API.** `api.spec.ts` usa o `request` context nativo do Playwright pra bater direto numa API HTTP — mesmo projeto, sem lib extra.
 - **Paralelismo.** `fullyParallel: true` roda os testes de um spec em paralelo.
 - **CI.** GitHub Actions roda a suíte completa em push e PR pra `main`; o HTML report é enviado como artifact em toda execução.
-
-## Documentação
-
-- [Guia de Estudo (GitHub Pages)](https://jpcarniel.github.io/playwright-e2e-ts/) — walkthrough completo do código: arquitetura, config, fixtures, Page Objects, API testing, dialogs, CI e perguntas de entrevista.
-- [Referência Python → TypeScript](docs/python-to-typescript.md) — como cada padrão do repo Python irmão mapeia pra TypeScript.
