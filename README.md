@@ -1,21 +1,23 @@
+![CI](https://github.com/jpcarniel/playwright-e2e-ts/actions/workflows/playwright.yml/badge.svg)
+
 # Playwright E2E Testing — Node.js / TypeScript
 
-End-to-end test automation against [the-internet.herokuapp.com](https://the-internet.herokuapp.com) using **Playwright Test** with **TypeScript**.
+Projeto de automação de testes end-to-end e de API para o [The Internet](https://the-internet.herokuapp.com) usando **Playwright Test** com **TypeScript**.
 
-Companion to [playwright-e2e-testing](https://github.com/jpcarniel/playwright-e2e-testing) (same targets, written in Python + pytest). This repo shows the same engineering patterns — Page Object Model, fixtures, CI — in the Node.js/TypeScript stack.
+Projeto irmão do [playwright-e2e-testing](https://github.com/jpcarniel/playwright-e2e-testing) (mesmo alvo, escrito em Python + pytest). Este repo mostra os mesmos padrões de engenharia — Page Object Model, fixtures, CI — na stack Node.js/TypeScript.
 
-## What is tested
+## O que é testado
 
-| Area | Tests |
-|------|-------|
-| Login (UI) | Valid credentials, invalid username, invalid password, empty fields, logout |
-| Dropdown (UI) | Default state, single selection, switching between options |
-| Checkboxes (UI) | Initial states, toggling, combined interactions |
-| Dynamic Loading (UI) | Hidden-then-shown, rendered-on-click |
-| JavaScript Alerts (UI) | Alert, confirm (accept/dismiss), prompt (accept with text/dismiss) |
-| HTTP API | GET, POST, query params, custom headers, 2xx/4xx status codes |
+| Área | Testes |
+|------|--------|
+| Login (UI) | Credenciais válidas, usuário inválido, senha inválida, campos vazios, logout |
+| Dropdown (UI) | Estado inicial, seleção única, troca entre opções |
+| Checkboxes (UI) | Estados iniciais, toggle, interações combinadas |
+| Dynamic Loading (UI) | Elementos ocultos-e-exibidos, renderizados-ao-clicar |
+| JavaScript Alerts (UI) | Alert, confirm (aceitar/cancelar), prompt (aceitar com texto/cancelar) |
+| HTTP API | GET, POST, query params, headers customizados, status codes 2xx/4xx |
 
-**Total:** 25 tests across 6 specs.
+**Total:** 25 testes em 6 specs.
 
 ## Stack
 
@@ -25,69 +27,69 @@ Companion to [playwright-e2e-testing](https://github.com/jpcarniel/playwright-e2
 - Chromium (headless)
 - GitHub Actions (CI)
 
-## How to run
+## Como executar
 
 ```bash
-# Install dependencies
+# Instalar dependências
 npm install
 
-# Install Playwright browsers
+# Instalar os browsers do Playwright
 npx playwright install --with-deps chromium
 
-# Run all tests (headless)
+# Rodar todos os testes (headless)
 npm test
 
-# Run with a visible browser
+# Rodar com browser visível
 npm run test:headed
 
-# Open the Playwright UI mode (interactive test runner)
+# Abrir o modo UI do Playwright (test runner interativo)
 npm run test:ui
 
-# Run a single spec
+# Rodar um spec específico
 npm run test:login
 npm run test:api
 
-# Open the HTML report after a run
+# Abrir o HTML report após uma execução
 npm run report
 ```
 
-## Project structure
+## Estrutura do projeto
 
 ```
 playwright-e2e-ts/
-├── .github/workflows/     # CI with GitHub Actions
-├── docs/                  # Python-to-TypeScript reference
-├── pages/                 # Page Objects (typed classes)
+├── .github/workflows/     # CI com GitHub Actions
+├── docs/                  # Referência Python → TypeScript
+├── pages/                 # Page Objects (classes tipadas)
 │   ├── LoginPage.ts
 │   ├── DropdownPage.ts
 │   ├── CheckboxesPage.ts
 │   ├── DynamicLoadingPage.ts
 │   └── JavaScriptAlertsPage.ts
 ├── fixtures/
-│   └── pages.ts           # Custom fixtures that inject Page Objects
+│   └── pages.ts           # Fixtures customizadas que injetam os Page Objects
 ├── tests/
 │   ├── login.spec.ts
 │   ├── dropdown.spec.ts
 │   ├── checkboxes.spec.ts
 │   ├── dynamic-loading.spec.ts
 │   ├── javascript-alerts.spec.ts
-│   └── api.spec.ts        # API layer using request context
+│   └── api.spec.ts        # Camada de API via request context
 ├── playwright.config.ts
 ├── tsconfig.json
 └── package.json
 ```
 
-## Architecture
+## Arquitetura
 
-- **Page Object Model.** Each page under test has a typed class in `pages/` that exposes locators and high-level actions. Tests never touch selectors directly.
-- **Typed fixtures.** `fixtures/pages.ts` uses `test.extend()` to inject Page Object instances into tests — one fresh instance per test. This is the Node.js/TypeScript equivalent of pytest's `conftest.py`.
-- **Auto-waiting.** Playwright waits for elements to be visible/stable before interacting. No explicit sleeps.
-- **Dialog handling.** JS alerts/confirms/prompts are handled via `page.once('dialog', ...)` **before** the action that triggers them.
-- **API coverage.** `api.spec.ts` uses Playwright's built-in `request` context to hit an HTTP API directly — same project, no extra library.
-- **Parallelism.** `fullyParallel: true` runs tests inside a single spec in parallel.
-- **CI.** GitHub Actions runs the full suite on push and PR to `main`; the HTML report is uploaded as an artifact on every run.
+- **Page Object Model.** Cada página testada tem uma classe tipada em `pages/` que expõe locators e ações de alto nível. Os testes nunca tocam em seletores diretamente.
+- **Fixtures tipadas.** `fixtures/pages.ts` usa `test.extend()` pra injetar instâncias de Page Objects nos testes — uma instância nova por teste. É o equivalente Node.js/TypeScript do `conftest.py` do pytest.
+- **Auto-waiting.** Playwright aguarda elementos ficarem visíveis/estáveis antes de interagir. Sem sleeps explícitos.
+- **Tratamento de dialogs.** Alerts/confirms/prompts são tratados com `page.once('dialog', ...)` **antes** da ação que os dispara.
+- **Cobertura de API.** `api.spec.ts` usa o `request` context nativo do Playwright pra bater direto numa API HTTP — mesmo projeto, sem lib extra.
+- **Paralelismo.** `fullyParallel: true` roda os testes de um spec em paralelo.
+- **CI.** GitHub Actions roda a suíte completa em push e PR pra `main`; o HTML report é enviado como artifact em toda execução.
 
-## Documentation
+## Documentação
 
-- [Study guide (GitHub Pages)](https://jpcarniel.github.io/playwright-e2e-ts/) — full walkthrough of the codebase: architecture, config, fixtures, Page Objects, API testing, dialogs, CI, and interview Q&A.
-- [Python → TypeScript reference](docs/python-to-typescript.md) — how each pattern in the sister Python repo maps to TypeScript.
+- [Guia de Estudo (GitHub Pages)](https://jpcarniel.github.io/playwright-e2e-ts/) — walkthrough completo do código: arquitetura, config, fixtures, Page Objects, API testing, dialogs, CI e perguntas de entrevista.
+- [Referência Python → TypeScript](docs/python-to-typescript.md) — como cada padrão do repo Python irmão mapeia pra TypeScript.

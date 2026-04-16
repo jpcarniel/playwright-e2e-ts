@@ -1,6 +1,6 @@
-# Playwright: Python → TypeScript reference
+# Playwright: referência Python → TypeScript
 
-A side-by-side cheat sheet for porting the patterns used in [playwright-e2e-testing](https://github.com/jpcarniel/playwright-e2e-testing) (Python + pytest) to this repo (Node.js + TypeScript).
+Cheat sheet lado a lado pra portar os padrões usados em [playwright-e2e-testing](https://github.com/jpcarniel/playwright-e2e-testing) (Python + pytest) pra este repo (Node.js + TypeScript).
 
 ## 1. Page Object
 
@@ -35,13 +35,13 @@ export class LoginPage {
 }
 ```
 
-Differences that matter:
-- Every action is `async` and must be `await`ed.
-- Locators are stored as `Locator` properties at construction time, not as selector strings.
-- Methods return `Promise<void>` instead of implicit `None`.
-- Property names are `camelCase` by convention.
+Diferenças que importam:
+- Toda ação é `async` e precisa de `await`.
+- Locators são guardados como propriedades `Locator` no construtor, não como strings de seletor.
+- Métodos retornam `Promise<void>` em vez de `None` implícito.
+- Nomes de propriedade em `camelCase` por convenção.
 
-## 2. Fixtures (dependency injection)
+## 2. Fixtures (injeção de dependência)
 
 **Python (`conftest.py`):**
 ```python
@@ -69,7 +69,7 @@ export const test = base.extend<Pages>({
 export { expect } from '@playwright/test';
 ```
 
-Tests then import `test` and `expect` from `fixtures/pages.ts` instead of from `@playwright/test` directly.
+Os testes então importam `test` e `expect` de `fixtures/pages.ts`, em vez de `@playwright/test` diretamente.
 
 ## 3. Assertions
 
@@ -89,10 +89,10 @@ await expect(loginPage.flashMessage).toContainText('You logged in');
 await expect(checkbox).not.toBeChecked();
 ```
 
-Differences:
-- `snake_case` → `camelCase` method names.
-- Every assertion on a `Locator` or `Page` is `async` and must be `await`ed.
-- Python uses `not_to_be_checked()`; TypeScript uses `.not.toBeChecked()`.
+Diferenças:
+- Nomes de método em `snake_case` → `camelCase`.
+- Toda assertion em `Locator` ou `Page` é `async` e precisa de `await`.
+- Python usa `not_to_be_checked()`; TypeScript usa `.not.toBeChecked()`.
 
 ## 4. Dialogs (alert / confirm / prompt)
 
@@ -100,54 +100,54 @@ Differences:
 ```python
 page.on("dialog", lambda dialog: dialog.accept())
 page.on("dialog", lambda dialog: dialog.dismiss())
-page.on("dialog", lambda dialog: dialog.accept("my text"))
+page.on("dialog", lambda dialog: dialog.accept("meu texto"))
 ```
 
 **TypeScript:**
 ```ts
 page.once('dialog', (dialog) => dialog.accept());
 page.once('dialog', (dialog) => dialog.dismiss());
-page.once('dialog', (dialog) => dialog.accept('my text'));
+page.once('dialog', (dialog) => dialog.accept('meu texto'));
 ```
 
-`page.once` (vs `page.on`) is preferred when only a single dialog is expected — it auto-removes the listener after firing.
+`page.once` (vs `page.on`) é preferido quando só um dialog é esperado — remove o listener automaticamente após disparar.
 
-## 5. API testing
+## 5. Testes de API
 
-**Python:** not included in the sister repo. Would typically use `requests` or `httpx`.
+**Python:** não tem no repo irmão. Tipicamente usaria `requests` ou `httpx`.
 
-**TypeScript:** use the built-in `request` fixture — no extra library needed:
+**TypeScript:** usa o `request` fixture nativo — sem lib extra:
 
 ```ts
-test('GET returns 200', async ({ request }) => {
+test('GET retorna 200', async ({ request }) => {
   const response = await request.get('https://httpbin.org/status/200');
   expect(response.status()).toBe(200);
 });
 ```
 
-## 6. Configuration
+## 6. Configuração
 
-| Concern | Python (`pytest.ini`) | TypeScript (`playwright.config.ts`) |
+| Aspecto | Python (`pytest.ini`) | TypeScript (`playwright.config.ts`) |
 |---------|----------------------|-------------------------------------|
 | Base URL | `base_url = https://...` | `use: { baseURL: '...' }` |
-| Parallelism | pytest-xdist (`-n auto`) | `fullyParallel: true`, `workers` |
-| Retries | plugin-specific | `retries: 1` |
+| Paralelismo | pytest-xdist (`-n auto`) | `fullyParallel: true`, `workers` |
+| Retries | via plugin | `retries: 1` |
 | Tracing | `--tracing=retain-on-failure` | `use: { trace: 'on-first-retry' }` |
 | Browsers | `pytest-playwright --browser` | `projects: [{ use: devices[...] }]` |
 
-## 7. Running tests
+## 7. Executando os testes
 
-| Action | Python | TypeScript |
-|--------|--------|------------|
-| All tests | `pytest -v` | `npx playwright test` |
-| Single file | `pytest tests/test_login.py -v` | `npx playwright test login.spec.ts` |
-| Headed | `pytest --headed` | `npx playwright test --headed` |
-| UI mode | n/a | `npx playwright test --ui` |
-| Show report | n/a (uses pytest output) | `npx playwright show-report` |
+| Ação | Python | TypeScript |
+|------|--------|------------|
+| Todos os testes | `pytest -v` | `npx playwright test` |
+| Arquivo único | `pytest tests/test_login.py -v` | `npx playwright test login.spec.ts` |
+| Com browser visível | `pytest --headed` | `npx playwright test --headed` |
+| Modo UI | n/a | `npx playwright test --ui` |
+| Abrir report | n/a (usa a saída do pytest) | `npx playwright show-report` |
 
-## 8. When to use which
+## 8. Quando usar cada um
 
-- **Prototyping, quick scripts:** Python is faster to read and write.
-- **Shared Node.js codebase, front-end team:** TypeScript integrates directly with the project's tooling (ESLint, tsconfig, same CI).
-- **API testing in the same suite:** Node.js has `request` context built in; Python needs an external HTTP client.
-- **Tight ecosystem with front-end:** TypeScript + `@playwright/test` is the default in most modern QA orgs that ship JavaScript/TypeScript products.
+- **Prototipagem, scripts rápidos:** Python é mais rápido de ler e escrever.
+- **Codebase Node.js compartilhado com o time de front-end:** TypeScript integra direto com o tooling do projeto (ESLint, tsconfig, mesmo CI).
+- **Testes de API na mesma suíte:** Node.js tem o `request` context embutido; Python precisa de cliente HTTP externo.
+- **Ecossistema alinhado com o front-end:** TypeScript + `@playwright/test` é o padrão na maioria das orgs de QA modernas que entregam produtos em JavaScript/TypeScript.
