@@ -89,4 +89,5 @@ playwright-e2e-ts/
 
 ## Documentation
 
+- [Study guide (GitHub Pages)](https://jpcarniel.github.io/playwright-e2e-ts/) — full walkthrough of the codebase: architecture, config, fixtures, Page Objects, API testing, dialogs, CI, and interview Q&A.
 - [Python → TypeScript reference](docs/python-to-typescript.md) — how each pattern in the sister Python repo maps to TypeScript.

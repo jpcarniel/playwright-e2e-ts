@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guia de Estudo — playwright-e2e-ts</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #161a23;
+    --panel-2: #1e232f;
+    --border: #2a303c;
+    --text: #e6e8ee;
+    --muted: #9aa3b2;
+    --accent: #4f9dff;
+    --accent-2: #7aa2f7;
+    --ok: #7bd389;
+    --warn: #f7c948;
+    --err: #ff7a7a;
+    --code-bg: #0b0e14;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    line-height: 1.6;
+  }
+  header {
+    padding: 32px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #141824 0%, #0f1117 100%);
+  }
+  header h1 { margin: 0 0 8px; font-size: 28px; }
+  header p { margin: 0; color: var(--muted); }
+  nav {
+    position: sticky; top: 0;
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 12px 24px;
+    background: rgba(15, 17, 23, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 10;
+  }
+  nav button {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  nav button:hover { border-color: var(--accent); }
+  nav button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0b0e14;
+    font-weight: 600;
+  }
+  main { padding: 24px; max-width: 1100px; margin: 0 auto; }
+  section { display: none; }
+  section.active { display: block; animation: fadein 0.2s; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  h2 { font-size: 22px; margin-top: 0; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+  h3 { color: var(--accent-2); margin-top: 28px; }
+  h4 { color: var(--text); margin-top: 20px; font-size: 15px; }
+  p, li { color: var(--text); }
+  .muted { color: var(--muted); }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  code { font-family: "SF Mono", Monaco, Consolas, monospace; }
+  :not(pre) > code {
+    background: var(--panel-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--accent-2);
+  }
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+  }
+  .callout.warn { border-color: var(--warn); }
+  .callout.ok { border-color: var(--ok); }
+  .callout.err { border-color: var(--err); }
+  .callout strong { color: var(--accent); }
+  .callout.warn strong { color: var(--warn); }
+  .callout.ok strong { color: var(--ok); }
+  .callout.err strong { color: var(--err); }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--panel-2); color: var(--accent-2); }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .tag.ts { background: #3178c6; color: white; }
+  .tag.pw { background: #2ead33; color: white; }
+  .tag.node { background: #539e43; color: white; }
+  footer { text-align: center; padding: 24px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); }
+  .token-k { color: #c678dd; }
+  .token-s { color: #98c379; }
+  .token-c { color: #7f848e; font-style: italic; }
+  .token-n { color: #e5c07b; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Guia de Estudo — playwright-e2e-ts</h1>
+  <p>
+    <span class="tag pw">Playwright</span>
+    <span class="tag ts">TypeScript</span>
+    <span class="tag node">Node.js 20</span>
+    Referência completa pra entender cada pedaço do projeto e chegar na entrevista técnica Satellitus com a stack na ponta da língua.
+  </p>
+</header>
+
+<nav>
+  <button data-tab="overview" class="active">1. Visão geral</button>
+  <button data-tab="arch">2. Arquitetura</button>
+  <button data-tab="config">3. playwright.config.ts</button>
+  <button data-tab="fixtures">4. Fixtures</button>
+  <button data-tab="pom">5. Page Objects</button>
+  <button data-tab="e2e">6. Testes E2E</button>
+  <button data-tab="api">7. API testing</button>
+  <button data-tab="dialogs">8. Dialogs</button>
+  <button data-tab="ci">9. CI/CD</button>
+  <button data-tab="py-vs-ts">10. Python → TS</button>
+  <button data-tab="interview">11. Entrevista</button>
+  <button data-tab="commands">12. Comandos</button>
+</nav>
+
+<main>
+
+<!-- ========================= 1. VISÃO GERAL ========================= -->
+<section id="overview" class="active">
+  <h2>1. Visão geral</h2>
+
+  <p>
+    Este repositório é a <strong>versão Node.js/TypeScript</strong> do projeto <code>playwright-e2e-testing</code> (que foi escrito em Python).
+    Ele existe por um motivo específico: a vaga da <strong>Satellitus</strong> pede <em>Playwright + Node.js</em>. Ter o mesmo projeto
+    em duas stacks demonstra <strong>portabilidade de conhecimento</strong> e conforto com o ecossistema que o time usa.
+  </p>
+
+  <h3>O que tem dentro</h3>
+  <ul>
+    <li><strong>25 testes</strong> passando em ~22s localmente.</li>
+    <li><strong>5 Page Objects tipados</strong> (Login, Dropdown, Checkboxes, DynamicLoading, JavaScriptAlerts).</li>
+    <li><strong>Fixtures customizadas</strong> via <code>test.extend&lt;&gt;()</code> — o equivalente TS do <code>conftest.py</code>.</li>
+    <li><strong>Testes de API</strong> com <code>request</code> fixture, sem libs extras.</li>
+    <li><strong>CI</strong> com GitHub Actions rodando Chromium headless.</li>
+    <li><strong>Documentação</strong>: <code>README.md</code> + <code>docs/python-to-typescript.md</code> (tabela comparativa).</li>
+  </ul>
+
+  <h3>Alvo dos testes</h3>
+  <ul>
+    <li><strong>UI</strong>: <code>the-internet.herokuapp.com</code> — site público didático com fluxos isolados.</li>
+    <li><strong>API</strong>: <code>httpbin.org</code> — API pública que ecoa requests (perfeita pra validar comportamento sem mock).</li>
+  </ul>
+
+  <h3>Por que esse projeto vende bem na entrevista</h3>
+  <div class="callout ok">
+    <strong>Argumentos fortes:</strong>
+    <ul style="margin: 8px 0 0;">
+      <li>Stack exata da vaga (Node 20 + <code>@playwright/test</code> + TS strict).</li>
+      <li>Mostra <strong>raciocínio de conversão</strong>: a tabela Python→TS prova que você entende os dois mundos.</li>
+      <li>API + E2E no mesmo runner — resposta pronta pra "e se quisesse testar API?".</li>
+      <li>Config comentada e justificada (<code>fullyParallel</code>, <code>trace: 'on-first-retry'</code>, <code>retries: CI ? 1 : 0</code>) — não é config copiada.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========================= 2. ARQUITETURA ========================= -->
+<section id="arch">
+  <h2>2. Arquitetura</h2>
+
+  <h3>Árvore do projeto</h3>
+  <pre><code>playwright-e2e-ts/
+├── .github/workflows/playwright.yml   <span class="token-c"># CI: instala Node 20, chromium, roda testes</span>
+├── docs/
+│   └── python-to-typescript.md        <span class="token-c"># Tabela de conversão</span>
+├── fixtures/
+│   └── pages.ts                       <span class="token-c"># test.extend injetando os 5 Page Objects</span>
+├── pages/
+│   ├── LoginPage.ts
+│   ├── DropdownPage.ts
+│   ├── CheckboxesPage.ts
+│   ├── DynamicLoadingPage.ts
+│   └── JavaScriptAlertsPage.ts
+├── tests/
+│   ├── login.spec.ts                  <span class="token-c"># 5 testes</span>
+│   ├── dropdown.spec.ts               <span class="token-c"># 4 testes</span>
+│   ├── checkboxes.spec.ts             <span class="token-c"># 4 testes</span>
+│   ├── dynamic-loading.spec.ts        <span class="token-c"># 2 testes</span>
+│   ├── javascript-alerts.spec.ts      <span class="token-c"># 5 testes</span>
+│   └── api.spec.ts                    <span class="token-c"># 5 testes de API (httpbin)</span>
+├── playwright.config.ts
+├── tsconfig.json
+├── package.json
+└── README.md</code></pre>
+
+  <h3>Fluxo de uma execução de teste</h3>
+  <ol>
+    <li><code>npm test</code> chama <code>npx playwright test</code>.</li>
+    <li>Playwright lê <code>playwright.config.ts</code> → sabe que os testes estão em <code>./tests</code>, <code>baseURL</code> é o-internet, projeto é <code>chromium</code>.</li>
+    <li>Pra cada arquivo <code>*.spec.ts</code>, Playwright lê os imports — o <code>test</code> importado de <code>fixtures/pages.ts</code> estende o <code>test</code> base com as 5 pages como fixtures.</li>
+    <li>Quando um teste declara <code>async ({ loginPage, page }) =&gt; ...</code>, Playwright:
+      <ol type="a">
+        <li>Cria um <code>BrowserContext</code> novo (cookies limpos).</li>
+        <li>Cria um <code>Page</code> novo.</li>
+        <li>Constrói <code>new LoginPage(page)</code> e injeta como <code>loginPage</code>.</li>
+      </ol>
+    </li>
+    <li>O teste roda. Ao terminar, o contexto é descartado (isolamento total).</li>
+    <li>Falhou? Playwright tira screenshot, grava vídeo (se configurado) e — se <code>retries &gt; 0</code> — retesta com trace ativo.</li>
+  </ol>
+
+  <h3>Princípios que regem o projeto</h3>
+  <table>
+    <tr><th>Princípio</th><th>Como aparece no código</th></tr>
+    <tr><td>Testes independentes</td><td>Cada teste começa com <code>visit()</code>. Nada depende de estado entre testes.</td></tr>
+    <tr><td>Auto-wait, nunca sleep</td><td>Não existe <code>waitForTimeout</code>. Usamos <code>expect(...).toHaveText()</code> e <code>locator.waitFor()</code>.</td></tr>
+    <tr><td>Locators no construtor</td><td>Cada Page Object guarda seus locators como <code>readonly</code> — refactor-friendly.</td></tr>
+    <tr><td>Tipagem estrita</td><td><code>tsconfig.json</code> com <code>strict: true</code>. Assinaturas sempre com <code>Promise&lt;void&gt;</code>.</td></tr>
+    <tr><td>Config diferente local vs CI</td><td><code>retries</code>, <code>workers</code>, <code>reporter</code> mudam quando <code>process.env.CI</code> é setado.</td></tr>
+  </table>
+</section>
+
+<!-- ========================= 3. CONFIG ========================= -->
+<section id="config">
+  <h2>3. <code>playwright.config.ts</code> — linha a linha</h2>
+
+  <p>Esse arquivo é o que o gestor vai pedir pra abrir na técnica. Saiba <strong>por que</strong> cada linha está lá.</p>
+
+  <pre><code><span class="token-k">import</span> { defineConfig, devices } <span class="token-k">from</span> <span class="token-s">'@playwright/test'</span>;
+
+<span class="token-k">export default</span> defineConfig({
+  testDir: <span class="token-s">'./tests'</span>,
+
+  forbidOnly: !!process.env.CI,           <span class="token-c">// bloqueia test.only no CI</span>
+  fullyParallel: <span class="token-n">true</span>,                    <span class="token-c">// paraleliza testes dentro de um spec</span>
+  retries: process.env.CI ? <span class="token-n">1</span> : <span class="token-n">0</span>,        <span class="token-c">// 1 retry no CI, 0 local</span>
+  workers: process.env.CI ? <span class="token-n">2</span> : <span class="token-k">undefined</span>, <span class="token-c">// 2 workers no CI, auto local</span>
+
+  reporter: process.env.CI
+    ? [[<span class="token-s">'list'</span>], [<span class="token-s">'html'</span>, { open: <span class="token-s">'never'</span> }]]
+    : [[<span class="token-s">'html'</span>, { open: <span class="token-s">'never'</span> }]],
+
+  use: {
+    baseURL: <span class="token-s">'https://the-internet.herokuapp.com'</span>,
+    trace: <span class="token-s">'on-first-retry'</span>,    <span class="token-c">// só grava trace quando retesta</span>
+    screenshot: <span class="token-s">'only-on-failure'</span>,
+    video: <span class="token-s">'retain-on-failure'</span>,
+    actionTimeout: <span class="token-n">10_000</span>,
+    navigationTimeout: <span class="token-n">15_000</span>,
+  },
+
+  projects: [
+    { name: <span class="token-s">'chromium'</span>, use: { ...devices[<span class="token-s">'Desktop Chrome'</span>] } },
+  ],
+});</code></pre>
+
+  <h3>Decisões justificadas</h3>
+
+  <h4><code>fullyParallel: true</code></h4>
+  <p>Cada teste dentro de um <code>.spec.ts</code> roda em paralelo (num worker separado). Acelera a suite. Só funciona porque escrevi os testes <strong>independentes</strong> (sem ordem obrigatória). Em projetos com testes acoplados, ligar isso quebra tudo.</p>
+
+  <h4><code>retries: process.env.CI ? 1 : 0</code></h4>
+  <p>Local eu quero ver a falha imediatamente pra consertar. No CI, 1 retry pega <em>flakes</em> de rede (ex.: herokuapp.com demorou 3s pra responder uma vez). Se falhar 2x, provavelmente é bug real. <strong>Nunca passaria de <code>retries: 1</code></strong> — retries demais escondem bugs.</p>
+
+  <h4><code>workers: process.env.CI ? 2 : undefined</code></h4>
+  <p><code>undefined</code> = Playwright usa metade dos cores disponíveis. Local isso é rápido. No CI (GitHub Actions runner com 2 vCPUs), setar explicitamente <code>2</code> é mais previsível que deixar automático.</p>
+
+  <h4><code>trace: 'on-first-retry'</code></h4>
+  <p>Trace é <strong>caro</strong> (arquivo de dezenas de MB com timeline completa, DOM snapshots, console, network). Gerar em todo teste é desperdício. <code>'on-first-retry'</code> só gera quando o teste já falhou uma vez — quando você <em>realmente</em> precisa debugar. Opções possíveis:</p>
+  <ul>
+    <li><code>'off'</code> — nunca.</li>
+    <li><code>'on'</code> — sempre (caro).</li>
+    <li><code>'retain-on-failure'</code> — só em falhas (sem retry).</li>
+    <li><code>'on-first-retry'</code> — <strong>este</strong>: balanço entre custo e debugging.</li>
+  </ul>
+
+  <h4><code>actionTimeout: 10_000</code> vs <code>navigationTimeout: 15_000</code></h4>
+  <p>Action (click, fill) é rápido — 10s é folga. Navegação pode envolver carregar página inteira — 15s dá margem. Timeouts separados permitem falhar rápido onde deveria ser rápido.</p>
+
+  <h4><code>projects: [{ name: 'chromium' }]</code></h4>
+  <p>Por enquanto só Chromium. Pra adicionar Firefox/WebKit: <code>{ name: 'firefox', use: { ...devices['Desktop Firefox'] } }</code>. Playwright rodaria os 25 testes em cada browser. Útil pra regressão cross-browser — custa mais tempo, então só em PRs marcados ou em nightly.</p>
+</section>
+
+<!-- ========================= 4. FIXTURES ========================= -->
+<section id="fixtures">
+  <h2>4. Fixtures — <code>test.extend&lt;&gt;()</code></h2>
+
+  <p>
+    Fixtures são o mecanismo do Playwright pra <strong>injetar dependências tipadas</strong> nos testes.
+    Se você vem de pytest, é o <code>conftest.py</code> — com tipos.
+  </p>
+
+  <pre><code><span class="token-c">// fixtures/pages.ts</span>
+<span class="token-k">import</span> { test <span class="token-k">as</span> base } <span class="token-k">from</span> <span class="token-s">'@playwright/test'</span>;
+<span class="token-k">import</span> { LoginPage } <span class="token-k">from</span> <span class="token-s">'../pages/LoginPage'</span>;
+<span class="token-c">// ... outros imports</span>
+
+<span class="token-k">type</span> Pages = {
+  loginPage: LoginPage;
+  dropdownPage: DropdownPage;
+  checkboxesPage: CheckboxesPage;
+  dynamicLoadingPage: DynamicLoadingPage;
+  javascriptAlertsPage: JavaScriptAlertsPage;
+};
+
+<span class="token-k">export const</span> test = base.extend&lt;Pages&gt;({
+  loginPage: <span class="token-k">async</span> ({ page }, use) =&gt; {
+    <span class="token-k">await</span> use(<span class="token-k">new</span> LoginPage(page));
+  },
+  <span class="token-c">// ... idem pros outros 4</span>
+});
+
+<span class="token-k">export</span> { expect } <span class="token-k">from</span> <span class="token-s">'@playwright/test'</span>;</code></pre>
+
+  <h3>Anatomia de uma fixture</h3>
+  <pre><code>loginPage: <span class="token-k">async</span> ({ page }, use) =&gt; {
+  <span class="token-c">// 1. SETUP: depende de `page` (outra fixture embutida do Playwright)</span>
+  <span class="token-k">const</span> loginPage = <span class="token-k">new</span> LoginPage(page);
+
+  <span class="token-c">// 2. INJEÇÃO: passa o valor pro teste</span>
+  <span class="token-k">await</span> use(loginPage);
+
+  <span class="token-c">// 3. TEARDOWN: tudo que vier depois de `await use(...)` roda após o teste</span>
+  <span class="token-c">// (aqui não preciso de teardown — o BrowserContext é descartado sozinho)</span>
+}</code></pre>
+
+  <h3>Como um teste consome</h3>
+  <pre><code><span class="token-c">// tests/login.spec.ts</span>
+<span class="token-k">import</span> { test, expect } <span class="token-k">from</span> <span class="token-s">'../fixtures/pages'</span>;
+<span class="token-c">//                                 ^^^ importa DO fixture, não de @playwright/test</span>
+
+test(<span class="token-s">'should log in'</span>, <span class="token-k">async</span> ({ loginPage, page }) =&gt; {
+  <span class="token-c">//                                    ^^^^^^^^^ ^^^^</span>
+  <span class="token-c">//                          fixture customizada fixture nativa</span>
+  <span class="token-k">await</span> loginPage.visit();
+  <span class="token-k">await</span> loginPage.login(<span class="token-s">'tomsmith'</span>, <span class="token-s">'SuperSecretPassword!'</span>);
+  <span class="token-k">await</span> expect(page).toHaveURL(/\/secure/);
+});</code></pre>
+
+  <div class="callout">
+    <strong>Ponto-chave pra entrevista:</strong> o gestor pode perguntar <em>"qual a diferença entre fixture e <code>beforeEach</code>?"</em>
+    <ul style="margin: 8px 0 0;">
+      <li><strong>beforeEach</strong>: executa código antes do teste. Não retorna valor. Se precisar compartilhar dados, tem que usar variável no escopo da descrição — sem tipagem segura.</li>
+      <li><strong>fixture</strong>: retorna um valor tipado, roda lazy (só se o teste declara), pode ter escopo <code>worker</code> (compartilhado entre testes do mesmo worker), e tem lifecycle setup+teardown.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========================= 5. POM ========================= -->
+<section id="pom">
+  <h2>5. Page Objects</h2>
+
+  <p>Page Object Model (POM) separa <strong>o que a página tem</strong> (seletores) e <strong>o que faz</strong> (ações) em uma classe. Os testes viram narrativas de negócio, não scripts cheios de CSS selectors.</p>
+
+  <h3>Exemplo anotado: <code>LoginPage</code></h3>
+  <pre><code><span class="token-k">import</span> { Locator, Page } <span class="token-k">from</span> <span class="token-s">'@playwright/test'</span>;
+
+<span class="token-k">export class</span> LoginPage {
+  <span class="token-k">readonly</span> page: Page;
+  <span class="token-k">readonly</span> usernameInput: Locator;
+  <span class="token-k">readonly</span> passwordInput: Locator;
+  <span class="token-k">readonly</span> submitButton: Locator;
+  <span class="token-k">readonly</span> flashMessage: Locator;
+  <span class="token-k">readonly</span> logoutButton: Locator;
+
+  <span class="token-k">constructor</span>(page: Page) {
+    <span class="token-k">this</span>.page = page;
+    <span class="token-k">this</span>.usernameInput = page.locator(<span class="token-s">'#username'</span>);
+    <span class="token-k">this</span>.passwordInput = page.locator(<span class="token-s">'#password'</span>);
+    <span class="token-k">this</span>.submitButton = page.locator(<span class="token-s">'button[type="submit"]'</span>);
+    <span class="token-k">this</span>.flashMessage = page.locator(<span class="token-s">'#flash'</span>);
+    <span class="token-k">this</span>.logoutButton = page.locator(<span class="token-s">'a[href="/logout"]'</span>);
+  }
+
+  <span class="token-k">async</span> visit(): Promise&lt;<span class="token-k">void</span>&gt; {
+    <span class="token-k">await this</span>.page.goto(<span class="token-s">'/login'</span>);  <span class="token-c">// usa baseURL do config</span>
+  }
+
+  <span class="token-k">async</span> login(username: <span class="token-k">string</span>, password: <span class="token-k">string</span>): Promise&lt;<span class="token-k">void</span>&gt; {
+    <span class="token-k">await this</span>.fillUsername(username);
+    <span class="token-k">await this</span>.fillPassword(password);
+    <span class="token-k">await this</span>.submit();
+  }
+  <span class="token-c">// ... métodos granulares (fillUsername, submit, logout)</span>
+}</code></pre>
+
+  <h3>Decisões que o gestor vai notar</h3>
+  <table>
+    <tr><th>Escolha</th><th>Por quê</th></tr>
+    <tr>
+      <td><code>readonly</code> nas propriedades</td>
+      <td>Impede reatribuição acidental (<code>this.submitButton = ...</code>). Os locators são ponteiros estáveis — nunca deveriam mudar.</td>
+    </tr>
+    <tr>
+      <td>Locators no construtor, não como strings</td>
+      <td>Se o seletor mudar, muda em 1 lugar. Nos testes você usa <code>loginPage.submitButton.click()</code>, não <code>page.locator('button[type="submit"]').click()</code>.</td>
+    </tr>
+    <tr>
+      <td>Métodos <code>async</code> retornando <code>Promise&lt;void&gt;</code></td>
+      <td>Tipo explícito. Se alguém esquecer o <code>await</code>, o TypeScript avisa (com <code>no-floating-promises</code> do ESLint, bloqueia).</td>
+    </tr>
+    <tr>
+      <td>Parâmetros tipados (<code>username: string</code>)</td>
+      <td>Strict mode pega erros de chamada. Sem <code>any</code> implícito.</td>
+    </tr>
+    <tr>
+      <td>Método de alto nível (<code>login</code>) + granulares (<code>fillUsername</code>, <code>submit</code>)</td>
+      <td>Testes felizes usam <code>login()</code>. Testes de borda (submit com campo vazio) usam só <code>submit()</code> direto. Granularidade pra flexibilidade.</td>
+    </tr>
+  </table>
+
+  <h3>Seletores — boas práticas</h3>
+  <ul>
+    <li><strong>Prefira IDs e roles</strong>: <code>#username</code>, <code>page.getByRole('button', { name: 'Login' })</code>.</li>
+    <li><strong>Evite classes CSS estilísticas</strong>: <code>.btn-primary</code> quebra quando redesign.</li>
+    <li><strong>Use <code>data-testid</code></strong> quando o time topar marcar os elementos: <code>page.getByTestId('submit-btn')</code> — estável como contrato.</li>
+  </ul>
+</section>
+
+<!-- ========================= 6. E2E ========================= -->
+<section id="e2e">
+  <h2>6. Testes E2E</h2>
+
+  <h3>Exemplo: <code>login.spec.ts</code></h3>
+  <pre><code><span class="token-k">import</span> { test, expect } <span class="token-k">from</span> <span class="token-s">'../fixtures/pages'</span>;
+
+test.describe(<span class="token-s">'Login page'</span>, () =&gt; {
+  test(<span class="token-s">'should log in with valid credentials'</span>, <span class="token-k">async</span> ({ loginPage, page }) =&gt; {
+    <span class="token-k">await</span> loginPage.visit();
+    <span class="token-k">await</span> loginPage.login(<span class="token-s">'tomsmith'</span>, <span class="token-s">'SuperSecretPassword!'</span>);
+
+    <span class="token-k">await</span> expect(page).toHaveURL(/\/secure/);
+    <span class="token-k">await</span> expect(loginPage.flashMessage).toContainText(<span class="token-s">'You logged into a secure area!'</span>);
+  });
+
+  test(<span class="token-s">'should display an error for an invalid username'</span>, <span class="token-k">async</span> ({ loginPage }) =&gt; {
+    <span class="token-k">await</span> loginPage.visit();
+    <span class="token-k">await</span> loginPage.login(<span class="token-s">'invaliduser'</span>, <span class="token-s">'SuperSecretPassword!'</span>);
+
+    <span class="token-k">await</span> expect(loginPage.flashMessage).toContainText(<span class="token-s">'Your username is invalid!'</span>);
+  });
+  <span class="token-c">// ... invalid password, empty fields, logout</span>
+});</code></pre>
+
+  <h3>Padrão AAA</h3>
+  <p>Todos os testes seguem <strong>Arrange / Act / Assert</strong>:</p>
+  <ul>
+    <li><strong>Arrange</strong>: <code>await loginPage.visit()</code> — coloca a página no estado conhecido.</li>
+    <li><strong>Act</strong>: <code>await loginPage.login(...)</code> — executa a ação sendo testada.</li>
+    <li><strong>Assert</strong>: <code>await expect(...)</code> — verifica resultado.</li>
+  </ul>
+
+  <h3>Assertions importantes do Playwright</h3>
+  <table>
+    <tr><th>Assertion</th><th>O que faz</th><th>Tem auto-wait?</th></tr>
+    <tr><td><code>toHaveURL(regex)</code></td><td>Aguarda URL bater</td><td>Sim</td></tr>
+    <tr><td><code>toHaveText(...)</code></td><td>Texto exato</td><td>Sim</td></tr>
+    <tr><td><code>toContainText(...)</code></td><td>Contém substring</td><td>Sim</td></tr>
+    <tr><td><code>toBeVisible()</code></td><td>Elemento no DOM + visível</td><td>Sim</td></tr>
+    <tr><td><code>toBeChecked()</code></td><td>Checkbox/radio marcado</td><td>Sim</td></tr>
+    <tr><td><code>toHaveCount(n)</code></td><td>Número de elementos no locator</td><td>Sim</td></tr>
+  </table>
+
+  <div class="callout warn">
+    <strong>Pegadinha:</strong> as assertions do Playwright <code>expect(locator)...</code> têm auto-wait.
+    As assertions do Jest-style <code>expect(valor).toBe(...)</code> <strong>não</strong> — são síncronas.
+    Se misturar (<code>expect(await locator.textContent()).toBe(...)</code>), você perde o retry automático.
+    <br><br>
+    <strong>Regra:</strong> pra DOM, sempre <code>expect(locator).to...()</code> com <code>await</code>.
+  </div>
+</section>
+
+<!-- ========================= 7. API ========================= -->
+<section id="api">
+  <h2>7. API testing com <code>request</code></h2>
+
+  <p>Esse é <strong>um dos argumentos mais fortes pra escolher Playwright</strong>: API testing nativo, sem Postman/supertest/axios.</p>
+
+  <h3>Como funciona</h3>
+  <p>O <code>request</code> é uma fixture embutida. Quando você declara <code>async ({ request }) =&gt; ...</code>, Playwright te dá um cliente HTTP que:</p>
+  <ul>
+    <li>Respeita <code>baseURL</code> e headers do config.</li>
+    <li>Pode compartilhar cookies/auth com o browser (via <code>storageState</code>).</li>
+    <li>Gera relatório no mesmo HTML report dos testes de UI.</li>
+  </ul>
+
+  <h3>Exemplos do <code>api.spec.ts</code></h3>
+
+  <h4>GET simples com status</h4>
+  <pre><code>test(<span class="token-s">'GET /status/200 returns 200 OK'</span>, <span class="token-k">async</span> ({ request }) =&gt; {
+  <span class="token-k">const</span> response = <span class="token-k">await</span> request.get(<span class="token-s">'https://httpbin.org/status/200'</span>);
+
+  expect(response.status()).toBe(<span class="token-n">200</span>);
+  expect(response.ok()).toBeTruthy();  <span class="token-c">// ok() é true pra 2xx</span>
+});</code></pre>
+
+  <h4>POST com body JSON</h4>
+  <pre><code>test(<span class="token-s">'POST /post echoes the JSON payload'</span>, <span class="token-k">async</span> ({ request }) =&gt; {
+  <span class="token-k">const</span> payload = { user: <span class="token-s">'tomsmith'</span>, action: <span class="token-s">'login'</span> };
+
+  <span class="token-k">const</span> response = <span class="token-k">await</span> request.post(<span class="token-s">'https://httpbin.org/post'</span>, {
+    data: payload,   <span class="token-c">// Playwright faz JSON.stringify e seta Content-Type automaticamente</span>
+  });
+
+  expect(response.status()).toBe(<span class="token-n">200</span>);
+  <span class="token-k">const</span> body = <span class="token-k">await</span> response.json();
+  expect(body.json).toEqual(payload);  <span class="token-c">// httpbin retorna o que mandei em body.json</span>
+});</code></pre>
+
+  <h4>Headers customizados (ex.: Authorization)</h4>
+  <pre><code>test(<span class="token-s">'GET /headers echoes a custom Authorization header'</span>, <span class="token-k">async</span> ({ request }) =&gt; {
+  <span class="token-k">const</span> response = <span class="token-k">await</span> request.get(<span class="token-s">'https://httpbin.org/headers'</span>, {
+    headers: { Authorization: <span class="token-s">'Bearer fake-token-123'</span> },
+  });
+
+  <span class="token-k">const</span> body = <span class="token-k">await</span> response.json();
+  expect(body.headers.Authorization).toBe(<span class="token-s">'Bearer fake-token-123'</span>);
+});</code></pre>
+
+  <h4>Query params</h4>
+  <pre><code>test(<span class="token-s">'GET /get returns JSON with query params'</span>, <span class="token-k">async</span> ({ request }) =&gt; {
+  <span class="token-k">const</span> response = <span class="token-k">await</span> request.get(<span class="token-s">'https://httpbin.org/get'</span>, {
+    params: { q: <span class="token-s">'playwright'</span>, lang: <span class="token-s">'typescript'</span> },
+  });
+
+  <span class="token-k">const</span> body = <span class="token-k">await</span> response.json();
+  expect(body.args).toEqual({ q: <span class="token-s">'playwright'</span>, lang: <span class="token-s">'typescript'</span> });
+});</code></pre>
+
+  <h3>Segredos em testes de API (o que travou na entrevista 1)</h3>
+  <div class="callout err">
+    <strong>NUNCA</strong> commitar tokens/keys. <strong>SEMPRE</strong>:
+    <ul style="margin: 8px 0 0;">
+      <li><code>.env</code> local (ignorado no <code>.gitignore</code>) + <code>.env.example</code> sem valores reais.</li>
+      <li>GitHub Actions: <code>secrets.API_TOKEN</code> passa via <code>env:</code> no step.</li>
+      <li>Consumir no teste: <code>process.env.API_TOKEN</code>.</li>
+      <li>Em produção: usar <strong>usuário de serviço com escopo mínimo</strong>, nunca usuário real.</li>
+      <li>Dados PII: usar <code>@faker-js/faker</code>, nunca dados de cliente real.</li>
+      <li>Logs: mascarar headers <code>Authorization</code> antes de reportar.</li>
+    </ul>
+  </div>
+
+  <pre><code><span class="token-c">// Exemplo do padrão recomendado</span>
+test(<span class="token-s">'authenticated call'</span>, <span class="token-k">async</span> ({ request }) =&gt; {
+  <span class="token-k">const</span> res = <span class="token-k">await</span> request.get(<span class="token-s">'/api/me'</span>, {
+    headers: { Authorization: <span class="token-s">`Bearer ${process.env.API_TOKEN}`</span> },
+  });
+  expect(res.status()).toBe(<span class="token-n">200</span>);
+});</code></pre>
+</section>
+
+<!-- ========================= 8. DIALOGS ========================= -->
+<section id="dialogs">
+  <h2>8. Dialogs — alert, confirm, prompt</h2>
+
+  <p>Dialogs nativos do browser (<code>window.alert</code>, <code>window.confirm</code>, <code>window.prompt</code>) <strong>travam a execução</strong> até serem respondidos. Playwright lida com eles via eventos.</p>
+
+  <h3>Regra de ouro: registre ANTES de disparar</h3>
+  <pre><code>test(<span class="token-s">'should accept a JS alert'</span>, <span class="token-k">async</span> ({ javascriptAlertsPage, page }) =&gt; {
+  <span class="token-k">await</span> javascriptAlertsPage.visit();
+
+  <span class="token-c">// 1. Registra o handler ANTES da ação que dispara o dialog</span>
+  page.once(<span class="token-s">'dialog'</span>, (dialog) =&gt; dialog.accept());
+
+  <span class="token-c">// 2. Agora dispara. Quando o alert abrir, o handler clica "OK".</span>
+  <span class="token-k">await</span> javascriptAlertsPage.triggerAlert();
+
+  <span class="token-k">await</span> expect(javascriptAlertsPage.result).toHaveText(<span class="token-s">'You successfully clicked an alert'</span>);
+});</code></pre>
+
+  <h3><code>page.once</code> vs <code>page.on</code></h3>
+  <ul>
+    <li><code>page.once</code>: handler executa 1 vez e desregistra. <strong>É o que você quer em testes</strong>.</li>
+    <li><code>page.on</code>: handler persiste. Se houver outro dialog depois, ele ainda pega. Pode vazar entre testes se o contexto não for recriado.</li>
+  </ul>
+
+  <h3>Os 3 métodos de <code>dialog</code></h3>
+  <table>
+    <tr><th>Método</th><th>Equivalente UI</th><th>Uso</th></tr>
+    <tr><td><code>dialog.accept()</code></td><td>Clicar "OK"</td><td>Alert, confirm positivo</td></tr>
+    <tr><td><code>dialog.accept('texto')</code></td><td>Preencher prompt e clicar "OK"</td><td>Prompt aceito com valor</td></tr>
+    <tr><td><code>dialog.dismiss()</code></td><td>Clicar "Cancelar" / X</td><td>Confirm negativo, prompt cancelado</td></tr>
+  </table>
+
+  <h3>Os 5 testes em <code>javascript-alerts.spec.ts</code></h3>
+  <ol>
+    <li><strong>Alert aceito</strong> — <code>dialog.accept()</code> → resultado "You successfully clicked an alert".</li>
+    <li><strong>Confirm aceito</strong> — <code>dialog.accept()</code> → "You clicked: Ok".</li>
+    <li><strong>Confirm cancelado</strong> — <code>dialog.dismiss()</code> → "You clicked: Cancel".</li>
+    <li><strong>Prompt com texto</strong> — <code>dialog.accept('Hello from Playwright')</code> → "You entered: Hello from Playwright".</li>
+    <li><strong>Prompt cancelado</strong> — <code>dialog.dismiss()</code> → "You entered: null".</li>
+  </ol>
+</section>
+
+<!-- ========================= 9. CI ========================= -->
+<section id="ci">
+  <h2>9. CI/CD — GitHub Actions</h2>
+
+  <h3><code>.github/workflows/playwright.yml</code></h3>
+  <pre><code>name: Playwright Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: <span class="token-s">'20'</span>
+          cache: <span class="token-s">'npm'</span>
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+        env:
+          CI: <span class="token-k">true</span>
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: <span class="token-n">30</span></code></pre>
+
+  <h3>Pontos de atenção</h3>
+  <ul>
+    <li><code>npm ci</code> em vez de <code>npm install</code>: mais rápido, usa <code>package-lock.json</code> como verdade absoluta.</li>
+    <li><code>--with-deps chromium</code>: instala os <strong>system deps</strong> do Linux que o Chromium precisa (Playwright cuida disso).</li>
+    <li><code>env: CI: true</code>: ativa o ramo <code>process.env.CI ? ...</code> do config (retries, workers, forbidOnly).</li>
+    <li><code>if: always()</code> no upload: faz upload do report <strong>mesmo quando testes falham</strong> — que é exatamente quando você mais quer o report.</li>
+    <li><code>retention-days: 30</code>: artifact fica 30 dias disponível pra download no GitHub.</li>
+  </ul>
+
+  <h3>Como verificar o report</h3>
+  <ol>
+    <li>Vai no PR → tab "Checks" → clica no run.</li>
+    <li>Na tela do run, aba "Summary" → seção "Artifacts" → baixa <code>playwright-report.zip</code>.</li>
+    <li>Descompacta e abre <code>index.html</code> no navegador.</li>
+  </ol>
+</section>
+
+<!-- ========================= 10. PY vs TS ========================= -->
+<section id="py-vs-ts">
+  <h2>10. Python → TypeScript — o que muda</h2>
+
+  <p>Esse repositório é irmão do <code>playwright-e2e-testing</code> (Python). Saber as diferenças mostra domínio dos dois mundos.</p>
+
+  <table>
+    <tr><th>Conceito</th><th>Python (pytest-playwright)</th><th>TypeScript (@playwright/test)</th></tr>
+    <tr><td>Test runner</td><td><code>pytest</code></td><td><code>npx playwright test</code></td></tr>
+    <tr><td>Fixtures</td><td><code>conftest.py</code> + <code>@pytest.fixture</code></td><td><code>test.extend&lt;Pages&gt;()</code> em <code>fixtures/pages.ts</code></td></tr>
+    <tr><td>Sincronismo</td><td><code>sync_api</code> (sem await)</td><td>sempre <code>async/await</code></td></tr>
+    <tr><td>Assertions</td><td><code>expect(x).to_have_text(...)</code></td><td><code>await expect(x).toHaveText(...)</code></td></tr>
+    <tr><td>Case</td><td><code>snake_case</code></td><td><code>camelCase</code></td></tr>
+    <tr><td>Dialogs</td><td><code>page.on("dialog", ...)</code></td><td><code>page.once('dialog', ...)</code></td></tr>
+    <tr><td>API testing</td><td>precisa <code>requests</code> ou <code>httpx</code></td><td><code>request</code> fixture nativa</td></tr>
+    <tr><td>Config</td><td><code>pytest.ini</code> + CLI flags</td><td><code>playwright.config.ts</code> objeto tipado</td></tr>
+    <tr><td>Tipagem</td><td>Type hints opcionais</td><td>Strict mode por padrão</td></tr>
+    <tr><td>Dependências</td><td><code>requirements.txt</code> + <code>pip</code></td><td><code>package.json</code> + <code>npm</code></td></tr>
+  </table>
+
+  <h3>Mesma classe lado a lado</h3>
+  <h4>Python</h4>
+  <pre><code><span class="token-k">from</span> playwright.sync_api <span class="token-k">import</span> Page
+
+<span class="token-k">class</span> LoginPage:
+    <span class="token-k">def</span> __init__(<span class="token-k">self</span>, page: Page):
+        <span class="token-k">self</span>.page = page
+        <span class="token-k">self</span>.username_input = page.locator(<span class="token-s">"#username"</span>)
+
+    <span class="token-k">def</span> visit(<span class="token-k">self</span>):
+        <span class="token-k">self</span>.page.goto(<span class="token-s">"/login"</span>)
+
+    <span class="token-k">def</span> fill_username(<span class="token-k">self</span>, username: <span class="token-k">str</span>):
+        <span class="token-k">self</span>.username_input.fill(username)</code></pre>
+
+  <h4>TypeScript</h4>
+  <pre><code><span class="token-k">import</span> { Locator, Page } <span class="token-k">from</span> <span class="token-s">'@playwright/test'</span>;
+
+<span class="token-k">export class</span> LoginPage {
+  <span class="token-k">readonly</span> page: Page;
+  <span class="token-k">readonly</span> usernameInput: Locator;
+
+  <span class="token-k">constructor</span>(page: Page) {
+    <span class="token-k">this</span>.page = page;
+    <span class="token-k">this</span>.usernameInput = page.locator(<span class="token-s">'#username'</span>);
+  }
+
+  <span class="token-k">async</span> visit(): Promise&lt;<span class="token-k">void</span>&gt; {
+    <span class="token-k">await this</span>.page.goto(<span class="token-s">'/login'</span>);
+  }
+
+  <span class="token-k">async</span> fillUsername(username: <span class="token-k">string</span>): Promise&lt;<span class="token-k">void</span>&gt; {
+    <span class="token-k">await this</span>.usernameInput.fill(username);
+  }
+}</code></pre>
+
+  <div class="callout">
+    <strong>Pergunta provável:</strong> <em>"Por que escolheria TS em vez de Python pra um novo projeto de QA?"</em><br>
+    <strong>Resposta:</strong> "Depende do time. Se o produto é web/Node, TS compartilha tipos com a aplicação (interfaces de API viram contratos de teste). Se o time é Python-heavy (data/ML), Python é menos fricção. Pra vaga com stack Node — como o produto que vocês descreveram — TS reduz handoff e acelera onboarding."
+  </div>
+</section>
+
+<!-- ========================= 11. ENTREVISTA ========================= -->
+<section id="interview">
+  <h2>11. Perguntas de entrevista — respostas prontas</h2>
+
+  <h3>Perguntas sobre Playwright</h3>
+
+  <h4>1. <em>"Qual a diferença entre <code>locator</code> e <code>page.$()</code>?"</em></h4>
+  <p><code>locator</code> é <strong>lazy</strong>: só avalia quando age, tem auto-wait, retry automático. Se o DOM muda, re-avalia.</p>
+  <p><code>$</code> (API antiga, tipo Puppeteer) é <strong>snapshot</strong>: retorna <code>ElementHandle</code> no momento da chamada. Se o DOM re-renderiza, vira referência morta. <strong>Sempre prefira <code>locator</code></strong>.</p>
+
+  <h4>2. <em>"Por que evitar <code>page.waitForTimeout(ms)</code>?"</em></h4>
+  <p>É sleep cego. Ou você espera demais (teste lento) ou de menos (flaky). Use <code>expect(locator).toBeVisible()</code> ou <code>locator.waitFor()</code>, que saem <strong>assim que a condição é verdade</strong> — com timeout configurável como limite superior.</p>
+
+  <h4>3. <em>"Como mockar uma API?"</em></h4>
+  <pre><code><span class="token-k">await</span> page.route(<span class="token-s">'**/api/users'</span>, (route) =&gt;
+  route.fulfill({ json: [{ id: <span class="token-n">1</span>, name: <span class="token-s">'Mock User'</span> }] })
+);</code></pre>
+  <p>Intercepta a requisição antes de sair. Útil pra testar UI sem depender de backend.</p>
+
+  <h4>4. <em>"<code>test.beforeEach</code> vs fixture?"</em></h4>
+  <p><code>beforeEach</code> roda código; <strong>fixture injeta valor tipado</strong>, tem lifecycle setup+teardown, pode ter escopo worker. Fixtures são mais reutilizáveis e seguras.</p>
+
+  <h4>5. <em>"Como rodar só testes de smoke?"</em></h4>
+  <p>Tag + grep: <code>test('@smoke logs in', ...)</code> + <code>npx playwright test --grep "@smoke"</code>.</p>
+
+  <h3>Perguntas que travaram na entrevista 1</h3>
+
+  <h4>Cypress vs Playwright</h4>
+  <ul>
+    <li><strong>Cypress</strong>: roda <em>dentro</em> do browser (arquitetura in-browser). Só 1 browser por suite. Time-travel debugging excelente. Comunidade enorme.</li>
+    <li><strong>Playwright</strong>: controla o browser externamente (out-of-process). Multi-browser, multi-tab, multi-contexto (testa cenários com N usuários). API testing nativo.</li>
+    <li><strong>Critério</strong>: stack do time, necessidade de multi-tab, e se vai testar API no mesmo projeto.</li>
+    <li><strong>Resposta curta</strong>: "Cypress é excelente pra UI em 1 browser; Playwright escala melhor pra multi-contexto e cobre API no mesmo runner."</li>
+  </ul>
+
+  <h4>Manual vs automatizado</h4>
+  <ul>
+    <li><strong>Automatiza</strong>: fluxos estáveis, críticos, repetitivos, baratos de manter.</li>
+    <li><strong>Manual</strong>: exploratório, novos fluxos ainda instáveis, cenários visuais subjetivos, UX.</li>
+    <li><strong>Critério</strong>: custo de automação + manutenção vs benefício de rodar N vezes.</li>
+    <li><strong>Não dizer</strong> "tudo pode ser automatizado" — soa ingênuo.</li>
+  </ul>
+
+  <h4>Dados sensíveis em API</h4>
+  <p>Resposta completa na seção 7 (API testing).</p>
+
+  <h4>Pirâmide de testes</h4>
+  <p>~70% unit (rápidos, devs) / ~20% integration / ~10% E2E (caros, lentos). QA tipicamente foca E2E + integration crítico quando os devs cobrem unit.</p>
+
+  <h3>Contexto Veniti (produto Satellitus)</h3>
+  <ul>
+    <li>Assistência 24h = <strong>crítico, não pode falhar</strong>.</li>
+    <li>E2E de fluxos principais (acionamento, status, histórico).</li>
+    <li>API: validação de contratos com fornecedores de serviço (status codes, timeouts).</li>
+    <li>Performance / SLA: resposta dentro do tempo prometido.</li>
+    <li>Segurança: auth, LGPD, logs sem PII.</li>
+    <li><strong>Posicionamento</strong>: "ajudo no que tá represado, depois evoluímos juntos a estratégia".</li>
+  </ul>
+</section>
+
+<!-- ========================= 12. COMANDOS ========================= -->
+<section id="commands">
+  <h2>12. Comandos rápidos</h2>
+
+  <h3>Setup inicial</h3>
+  <pre><code>npm ci                              <span class="token-c"># instala deps do package-lock</span>
+npx playwright install chromium     <span class="token-c"># baixa o Chromium</span>
+npm test                            <span class="token-c"># roda todos os 25 testes</span></code></pre>
+
+  <h3>Execução</h3>
+  <pre><code>npm test                            <span class="token-c"># roda tudo (headless)</span>
+npm run test:ui                     <span class="token-c"># modo interativo (watch + debugger)</span>
+npm run test:headed                 <span class="token-c"># com browser visível</span>
+npm run test:report                 <span class="token-c"># abre último HTML report</span>
+
+npx playwright test login.spec.ts   <span class="token-c"># só 1 arquivo</span>
+npx playwright test --grep <span class="token-s">"@smoke"</span>   <span class="token-c"># por tag</span>
+npx playwright test --debug         <span class="token-c"># step-through com Inspector</span>
+npx playwright test -g <span class="token-s">"logout"</span>       <span class="token-c"># filtro por nome do teste</span></code></pre>
+
+  <h3>Debugging</h3>
+  <pre><code>npx playwright codegen https://example.com   <span class="token-c"># grava clicks e gera código</span>
+npx playwright show-trace trace.zip          <span class="token-c"># abre trace de uma falha</span>
+npx playwright show-report                   <span class="token-c"># abre o HTML report mais recente</span></code></pre>
+
+  <h3>Scripts do <code>package.json</code></h3>
+  <pre><code>{
+  <span class="token-s">"scripts"</span>: {
+    <span class="token-s">"test"</span>: <span class="token-s">"playwright test"</span>,
+    <span class="token-s">"test:ui"</span>: <span class="token-s">"playwright test --ui"</span>,
+    <span class="token-s">"test:headed"</span>: <span class="token-s">"playwright test --headed"</span>,
+    <span class="token-s">"test:report"</span>: <span class="token-s">"playwright show-report"</span>,
+    <span class="token-s">"test:login"</span>: <span class="token-s">"playwright test login.spec.ts"</span>,
+    <span class="token-s">"test:api"</span>: <span class="token-s">"playwright test api.spec.ts"</span>
+  }
+}</code></pre>
+
+  <h3>Checklist pré-entrevista (1h antes)</h3>
+  <div class="callout ok">
+    <ul style="margin: 0;">
+      <li><input type="checkbox"> Rodar <code>npm test</code> e ver os 25 passando</li>
+      <li><input type="checkbox"> Abrir <code>playwright.config.ts</code> + <code>LoginPage.ts</code> em outra aba</li>
+      <li><input type="checkbox"> Revisar esta nota + <code>Preparação Entrevista Técnica Satellitus</code> no Obsidian</li>
+      <li><input type="checkbox"> Post-mortem da entrevista 1 em <code>Entrevista Satellitus.md</code></li>
+      <li><input type="checkbox"> Microfone, câmera, conexão</li>
+      <li><input type="checkbox"> Copo de água, fone com mic</li>
+      <li><input type="checkbox"> Respirar — você sabe mais do que acha</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  playwright-e2e-ts · Guia de estudo · 2026-04-16
+</footer>
+
+<script>
+  const buttons = document.querySelectorAll('nav button');
+  const sections = document.querySelectorAll('main section');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
+      buttons.forEach((b) => b.classList.toggle('active', b === btn));
+      sections.forEach((s) => s.classList.toggle('active', s.id === target));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
