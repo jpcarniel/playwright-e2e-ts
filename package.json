@@ -1,0 +1,33 @@
+{
+  "name": "playwright-e2e-ts",
+  "version": "1.0.0",
+  "description": "E2E test automation with Playwright (Node.js/TypeScript) against the-internet.herokuapp.com",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:login": "playwright test login.spec.ts",
+    "test:dropdown": "playwright test dropdown.spec.ts",
+    "test:checkboxes": "playwright test checkboxes.spec.ts",
+    "test:dynamic-loading": "playwright test dynamic-loading.spec.ts",
+    "test:alerts": "playwright test javascript-alerts.spec.ts",
+    "test:api": "playwright test api.spec.ts",
+    "report": "playwright show-report"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "e2e",
+    "testing",
+    "qa",
+    "automation"
+  ],
+  "author": "João Paulo Carniel Fonseca",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  }
+}
