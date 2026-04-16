@@ -129,7 +129,7 @@
     <span class="tag pw">Playwright</span>
     <span class="tag ts">TypeScript</span>
     <span class="tag node">Node.js 20</span>
-    Referência completa pra entender cada pedaço do projeto e chegar na entrevista técnica Satellitus com a stack na ponta da língua.
+    Referência completa pra entender cada pedaço do projeto e dominar a stack de testes com Playwright + TypeScript.
   </p>
 </header>
 
@@ -144,7 +144,7 @@
   <button data-tab="dialogs">8. Dialogs</button>
   <button data-tab="ci">9. CI/CD</button>
   <button data-tab="py-vs-ts">10. Python → TS</button>
-  <button data-tab="interview">11. Entrevista</button>
+  <button data-tab="interview">11. Perguntas típicas</button>
   <button data-tab="commands">12. Comandos</button>
 </nav>
 
@@ -155,9 +155,8 @@
   <h2>1. Visão geral</h2>
 
   <p>
-    Este repositório é a <strong>versão Node.js/TypeScript</strong> do projeto <code>playwright-e2e-testing</code> (que foi escrito em Python).
-    Ele existe por um motivo específico: a vaga da <strong>Satellitus</strong> pede <em>Playwright + Node.js</em>. Ter o mesmo projeto
-    em duas stacks demonstra <strong>portabilidade de conhecimento</strong> e conforto com o ecossistema que o time usa.
+    Este repositório é a <strong>versão Node.js/TypeScript</strong> do projeto <code>playwright-e2e-testing</code> (escrito em Python).
+    Mesmos alvos, mesmos padrões de engenharia (Page Object Model, fixtures, CI), em duas stacks diferentes.
   </p>
 
   <h3>O que tem dentro</h3>
@@ -176,14 +175,13 @@
     <li><strong>API</strong>: <code>httpbin.org</code> — API pública que ecoa requests (perfeita pra validar comportamento sem mock).</li>
   </ul>
 
-  <h3>Por que esse projeto vende bem na entrevista</h3>
+  <h3>Destaques técnicos</h3>
   <div class="callout ok">
-    <strong>Argumentos fortes:</strong>
     <ul style="margin: 8px 0 0;">
-      <li>Stack exata da vaga (Node 20 + <code>@playwright/test</code> + TS strict).</li>
-      <li>Mostra <strong>raciocínio de conversão</strong>: a tabela Python→TS prova que você entende os dois mundos.</li>
-      <li>API + E2E no mesmo runner — resposta pronta pra "e se quisesse testar API?".</li>
-      <li>Config comentada e justificada (<code>fullyParallel</code>, <code>trace: 'on-first-retry'</code>, <code>retries: CI ? 1 : 0</code>) — não é config copiada.</li>
+      <li>Stack moderna (Node 20 + <code>@playwright/test</code> + TypeScript strict).</li>
+      <li>Tabela Python → TypeScript mostrando a conversão entre as duas stacks.</li>
+      <li>API + E2E no mesmo runner, sem libs extras.</li>
+      <li>Config comentada e justificada (<code>fullyParallel</code>, <code>trace: 'on-first-retry'</code>, <code>retries: CI ? 1 : 0</code>).</li>
     </ul>
   </div>
 </section>
@@ -248,7 +246,7 @@
 <section id="config">
   <h2>3. <code>playwright.config.ts</code> — linha a linha</h2>
 
-  <p>Esse arquivo é o que o gestor vai pedir pra abrir na técnica. Saiba <strong>por que</strong> cada linha está lá.</p>
+  <p>Esse é o primeiro arquivo a entender — define como toda a suíte se comporta. Saber <strong>por que</strong> cada linha está lá é essencial.</p>
 
   <pre><code><span class="token-k">import</span> { defineConfig, devices } <span class="token-k">from</span> <span class="token-s">'@playwright/test'</span>;
 
@@ -362,7 +360,7 @@ test(<span class="token-s">'should log in'</span>, <span class="token-k">async</
 });</code></pre>
 
   <div class="callout">
-    <strong>Ponto-chave pra entrevista:</strong> o gestor pode perguntar <em>"qual a diferença entre fixture e <code>beforeEach</code>?"</em>
+    <strong>Diferença clássica — fixture vs <code>beforeEach</code>:</strong>
     <ul style="margin: 8px 0 0;">
       <li><strong>beforeEach</strong>: executa código antes do teste. Não retorna valor. Se precisar compartilhar dados, tem que usar variável no escopo da descrição — sem tipagem segura.</li>
       <li><strong>fixture</strong>: retorna um valor tipado, roda lazy (só se o teste declara), pode ter escopo <code>worker</code> (compartilhado entre testes do mesmo worker), e tem lifecycle setup+teardown.</li>
@@ -408,7 +406,7 @@ test(<span class="token-s">'should log in'</span>, <span class="token-k">async</
   <span class="token-c">// ... métodos granulares (fillUsername, submit, logout)</span>
 }</code></pre>
 
-  <h3>Decisões que o gestor vai notar</h3>
+  <h3>Decisões importantes</h3>
   <table>
     <tr><th>Escolha</th><th>Por quê</th></tr>
     <tr>
@@ -551,7 +549,7 @@ test.describe(<span class="token-s">'Login page'</span>, () =&gt; {
   expect(body.args).toEqual({ q: <span class="token-s">'playwright'</span>, lang: <span class="token-s">'typescript'</span> });
 });</code></pre>
 
-  <h3>Segredos em testes de API (o que travou na entrevista 1)</h3>
+  <h3>Segredos em testes de API</h3>
   <div class="callout err">
     <strong>NUNCA</strong> commitar tokens/keys. <strong>SEMPRE</strong>:
     <ul style="margin: 8px 0 0;">
@@ -726,69 +724,58 @@ jobs:
 }</code></pre>
 
   <div class="callout">
-    <strong>Pergunta provável:</strong> <em>"Por que escolheria TS em vez de Python pra um novo projeto de QA?"</em><br>
-    <strong>Resposta:</strong> "Depende do time. Se o produto é web/Node, TS compartilha tipos com a aplicação (interfaces de API viram contratos de teste). Se o time é Python-heavy (data/ML), Python é menos fricção. Pra vaga com stack Node — como o produto que vocês descreveram — TS reduz handoff e acelera onboarding."
+    <strong>Quando escolher TS vs Python pra QA?</strong> Depende do time. Se o produto é web/Node, TypeScript compartilha tipos com a aplicação (interfaces de API viram contratos de teste). Se o time é Python-heavy (data/ML), Python é menos fricção. Em stack Node, TypeScript reduz handoff e acelera onboarding.
   </div>
 </section>
 
 <!-- ========================= 11. ENTREVISTA ========================= -->
 <section id="interview">
-  <h2>11. Perguntas de entrevista — respostas prontas</h2>
+  <h2>11. Perguntas técnicas típicas</h2>
 
-  <h3>Perguntas sobre Playwright</h3>
+  <h3>Playwright</h3>
 
-  <h4>1. <em>"Qual a diferença entre <code>locator</code> e <code>page.$()</code>?"</em></h4>
+  <h4><code>locator</code> vs <code>page.$()</code></h4>
   <p><code>locator</code> é <strong>lazy</strong>: só avalia quando age, tem auto-wait, retry automático. Se o DOM muda, re-avalia.</p>
   <p><code>$</code> (API antiga, tipo Puppeteer) é <strong>snapshot</strong>: retorna <code>ElementHandle</code> no momento da chamada. Se o DOM re-renderiza, vira referência morta. <strong>Sempre prefira <code>locator</code></strong>.</p>
 
-  <h4>2. <em>"Por que evitar <code>page.waitForTimeout(ms)</code>?"</em></h4>
+  <h4>Por que evitar <code>page.waitForTimeout(ms)</code></h4>
   <p>É sleep cego. Ou você espera demais (teste lento) ou de menos (flaky). Use <code>expect(locator).toBeVisible()</code> ou <code>locator.waitFor()</code>, que saem <strong>assim que a condição é verdade</strong> — com timeout configurável como limite superior.</p>
 
-  <h4>3. <em>"Como mockar uma API?"</em></h4>
+  <h4>Como mockar uma API</h4>
   <pre><code><span class="token-k">await</span> page.route(<span class="token-s">'**/api/users'</span>, (route) =&gt;
   route.fulfill({ json: [{ id: <span class="token-n">1</span>, name: <span class="token-s">'Mock User'</span> }] })
 );</code></pre>
   <p>Intercepta a requisição antes de sair. Útil pra testar UI sem depender de backend.</p>
 
-  <h4>4. <em>"<code>test.beforeEach</code> vs fixture?"</em></h4>
+  <h4><code>test.beforeEach</code> vs fixture</h4>
   <p><code>beforeEach</code> roda código; <strong>fixture injeta valor tipado</strong>, tem lifecycle setup+teardown, pode ter escopo worker. Fixtures são mais reutilizáveis e seguras.</p>
 
-  <h4>5. <em>"Como rodar só testes de smoke?"</em></h4>
+  <h4>Como rodar só testes de smoke</h4>
   <p>Tag + grep: <code>test('@smoke logs in', ...)</code> + <code>npx playwright test --grep "@smoke"</code>.</p>
 
-  <h3>Perguntas que travaram na entrevista 1</h3>
+  <h3>QA em geral</h3>
 
   <h4>Cypress vs Playwright</h4>
   <ul>
-    <li><strong>Cypress</strong>: roda <em>dentro</em> do browser (arquitetura in-browser). Só 1 browser por suite. Time-travel debugging excelente. Comunidade enorme.</li>
-    <li><strong>Playwright</strong>: controla o browser externamente (out-of-process). Multi-browser, multi-tab, multi-contexto (testa cenários com N usuários). API testing nativo.</li>
-    <li><strong>Critério</strong>: stack do time, necessidade de multi-tab, e se vai testar API no mesmo projeto.</li>
+    <li><strong>Cypress</strong>: roda <em>dentro</em> do browser (arquitetura in-browser). Só 1 browser por suíte. Time-travel debugging excelente. Comunidade enorme.</li>
+    <li><strong>Playwright</strong>: controla o browser externamente (out-of-process). Multi-browser, multi-tab, multi-contexto (cenários com N usuários). API testing nativo.</li>
+    <li><strong>Critério de escolha</strong>: stack do time, necessidade de multi-tab, e se vai testar API no mesmo projeto.</li>
     <li><strong>Resposta curta</strong>: "Cypress é excelente pra UI em 1 browser; Playwright escala melhor pra multi-contexto e cobre API no mesmo runner."</li>
   </ul>
 
   <h4>Manual vs automatizado</h4>
   <ul>
     <li><strong>Automatiza</strong>: fluxos estáveis, críticos, repetitivos, baratos de manter.</li>
-    <li><strong>Manual</strong>: exploratório, novos fluxos ainda instáveis, cenários visuais subjetivos, UX.</li>
+    <li><strong>Manual</strong>: exploratório, fluxos novos ainda instáveis, cenários visuais subjetivos, UX.</li>
     <li><strong>Critério</strong>: custo de automação + manutenção vs benefício de rodar N vezes.</li>
-    <li><strong>Não dizer</strong> "tudo pode ser automatizado" — soa ingênuo.</li>
+    <li><strong>Cuidado</strong> com afirmações absolutas como "tudo pode ser automatizado" — alguns testes custam mais caro pra manter que pra rodar manualmente.</li>
   </ul>
 
-  <h4>Dados sensíveis em API</h4>
-  <p>Resposta completa na seção 7 (API testing).</p>
+  <h4>Dados sensíveis em testes de API</h4>
+  <p>Resposta detalhada na seção 7 (API testing) — resumo: nunca commitar tokens, usar <code>.env</code> + secrets de CI, usuário de serviço com escopo mínimo, mascarar headers em logs, dados fake via <code>@faker-js/faker</code>.</p>
 
   <h4>Pirâmide de testes</h4>
   <p>~70% unit (rápidos, devs) / ~20% integration / ~10% E2E (caros, lentos). QA tipicamente foca E2E + integration crítico quando os devs cobrem unit.</p>
-
-  <h3>Contexto Veniti (produto Satellitus)</h3>
-  <ul>
-    <li>Assistência 24h = <strong>crítico, não pode falhar</strong>.</li>
-    <li>E2E de fluxos principais (acionamento, status, histórico).</li>
-    <li>API: validação de contratos com fornecedores de serviço (status codes, timeouts).</li>
-    <li>Performance / SLA: resposta dentro do tempo prometido.</li>
-    <li>Segurança: auth, LGPD, logs sem PII.</li>
-    <li><strong>Posicionamento</strong>: "ajudo no que tá represado, depois evoluímos juntos a estratégia".</li>
-  </ul>
 </section>
 
 <!-- ========================= 12. COMANDOS ========================= -->
@@ -828,16 +815,13 @@ npx playwright show-report                   <span class="token-c"># abre o HTML
   }
 }</code></pre>
 
-  <h3>Checklist pré-entrevista (1h antes)</h3>
+  <h3>Smoke check local</h3>
   <div class="callout ok">
     <ul style="margin: 0;">
-      <li><input type="checkbox"> Rodar <code>npm test</code> e ver os 25 passando</li>
-      <li><input type="checkbox"> Abrir <code>playwright.config.ts</code> + <code>LoginPage.ts</code> em outra aba</li>
-      <li><input type="checkbox"> Revisar esta nota + <code>Preparação Entrevista Técnica Satellitus</code> no Obsidian</li>
-      <li><input type="checkbox"> Post-mortem da entrevista 1 em <code>Entrevista Satellitus.md</code></li>
-      <li><input type="checkbox"> Microfone, câmera, conexão</li>
-      <li><input type="checkbox"> Copo de água, fone com mic</li>
-      <li><input type="checkbox"> Respirar — você sabe mais do que acha</li>
+      <li><input type="checkbox"> <code>npm ci</code> — instala deps limpas</li>
+      <li><input type="checkbox"> <code>npx playwright install chromium</code> — instala o browser</li>
+      <li><input type="checkbox"> <code>npm test</code> — 25 testes devem passar em ~22s</li>
+      <li><input type="checkbox"> <code>npx playwright show-report</code> — abre o HTML report</li>
     </ul>
   </div>
 </section>
