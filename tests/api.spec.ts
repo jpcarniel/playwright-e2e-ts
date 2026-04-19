@@ -1,12 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-/**
- * API tests using Playwright's built-in `request` fixture.
- *
- * These tests exercise the httpbin.org public API to demonstrate that
- * Playwright can cover the API layer in the same project as the UI tests —
- * no extra tool (Postman, supertest, axios) needed.
- */
 test.describe('API testing with Playwright request context', () => {
   const baseURL = 'https://httpbin.org';
 

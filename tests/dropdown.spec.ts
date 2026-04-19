@@ -4,7 +4,6 @@ test.describe('Dropdown page', () => {
   test('should have no option selected by default', async ({ dropdownPage }) => {
     await dropdownPage.visit();
 
-    // The placeholder option has an empty value attribute.
     await expect(dropdownPage.dropdown).toHaveValue('');
   });
 

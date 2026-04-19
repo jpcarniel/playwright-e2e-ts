@@ -4,7 +4,6 @@ test.describe('JavaScript Alerts page', () => {
   test('should accept a JS alert', async ({ javascriptAlertsPage, page }) => {
     await javascriptAlertsPage.visit();
 
-    // IMPORTANT: register the dialog handler before the action that opens it.
     page.once('dialog', (dialog) => dialog.accept());
 
     await javascriptAlertsPage.triggerAlert();

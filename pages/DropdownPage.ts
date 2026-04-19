@@ -1,8 +1,5 @@
 import { Locator, Page } from '@playwright/test';
 
-/**
- * Page Object for /dropdown.
- */
 export class DropdownPage {
   readonly page: Page;
   readonly dropdown: Locator;
@@ -16,9 +13,6 @@ export class DropdownPage {
     await this.page.goto('/dropdown');
   }
 
-  /**
-   * Select an option by its value attribute.
-   */
   async selectOption(value: string): Promise<void> {
     await this.dropdown.selectOption(value);
   }

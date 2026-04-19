@@ -1,12 +1,5 @@
 import { Locator, Page } from '@playwright/test';
 
-/**
- * Page Object for /dynamic_loading.
- *
- * Two examples live on this page:
- *   /dynamic_loading/1 — element is hidden, then shown after a delay.
- *   /dynamic_loading/2 — element does not exist in the DOM, then is rendered.
- */
 export class DynamicLoadingPage {
   readonly page: Page;
   readonly startButton: Locator;

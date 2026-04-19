@@ -1,11 +1,5 @@
 import { Locator, Page } from '@playwright/test';
 
-/**
- * Page Object for /javascript_alerts.
- *
- * Note: the dialog handler must be registered *before* the click that triggers
- * the dialog. See javascript-alerts.spec.ts for the pattern.
- */
 export class JavaScriptAlertsPage {
   readonly page: Page;
   readonly alertButton: Locator;

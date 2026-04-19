@@ -5,7 +5,6 @@ test.describe('Dynamic Loading page', () => {
     await dynamicLoadingPage.visitExample(1);
     await dynamicLoadingPage.clickStart();
 
-    // Playwright auto-waits for visibility; 10s covers the simulated latency.
     await expect(dynamicLoadingPage.loadedText).toBeVisible({ timeout: 10_000 });
     await expect(dynamicLoadingPage.loadedText).toHaveText('Hello World!');
   });

@@ -1,8 +1,5 @@
 import { Locator, Page } from '@playwright/test';
 
-/**
- * Page Object for /checkboxes.
- */
 export class CheckboxesPage {
   readonly page: Page;
   readonly checkboxes: Locator;
@@ -16,9 +13,6 @@ export class CheckboxesPage {
     await this.page.goto('/checkboxes');
   }
 
-  /**
-   * Return the Nth checkbox (0-based).
-   */
   getCheckbox(index: number): Locator {
     return this.checkboxes.nth(index);
   }

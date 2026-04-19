@@ -1,8 +1,5 @@
 import { Locator, Page } from '@playwright/test';
 
-/**
- * Page Object for /login.
- */
 export class LoginPage {
   readonly page: Page;
   readonly usernameInput: Locator;
@@ -36,9 +33,6 @@ export class LoginPage {
     await this.submitButton.click();
   }
 
-  /**
-   * Convenience helper: fill both fields and submit.
-   */
   async login(username: string, password: string): Promise<void> {
     await this.fillUsername(username);
     await this.fillPassword(password);
